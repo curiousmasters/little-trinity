@@ -74,6 +74,29 @@ Routes: `/` home · `/books` · `/books/:id` · `/join` · `/account` · `/accou
 Auth: Cognito Managed Login with Authorization Code + PKCE through `react-oidc-context`. The access token is sent as a Bearer token.
 The API validates JWTs as an OAuth2 resource server and maps the `cognito:groups` claim to roles.
 
+## Design & test automation (applies to every spec)
+See ADR 0005.
+
+**Figma → UI.** Figma is the design source of truth. For every spec with UI:
+1. Frames for the spec's screens (mobile 375 px first, then desktop 1280 px), including empty, loading and error states, live on that spec's Figma page.
+2. The frames are marked **Ready for dev** and linked from `docs/design/README.md` and the spec before the UI tasks start.
+3. Components reuse the Figma `Components` page and the tokens (Figma variables → MUI theme). New tokens are added in Figma first, then in `theme.ts`.
+4. If the implementation must differ from the design (accessibility, technical limits), note it in the spec and update the frame.
+
+**Test pyramid.**
+| Layer | Tool | Where | What it proves |
+|-------|------|-------|----------------|
+| Unit | JUnit 5 + AssertJ / Vitest + RTL | `api/src/test`, `web/src/**/*.test.tsx` | Domain rules, components, hooks |
+| Integration | Testcontainers, `spring-security-test`, MSW | `api/src/test` | Repositories, controllers, security, module boundaries |
+| Backend acceptance | **Cucumber** (Gherkin) | `api/src/acceptanceTest` | Business rules (BR-xx) and spec acceptance criteria through the REST API |
+| UI end-to-end | **Playwright** (+ axe-core) | `web/e2e` | Critical user journeys in a real browser against the real stack |
+
+**Cucumber conventions.** One feature file per behaviour (`features/<module>/<behaviour>.feature`), written in plain language the library owner can read. No UI wording or database details in steps. Tag scenarios with module and rule IDs (`@slots @BR-02`). Steps drive the public REST API only. Time is set through the test `Clock`. Each scenario sets up its own data.
+
+**Playwright conventions.** One spec file per journey (`e2e/<feature>/<journey>.spec.ts`), page objects in `e2e/pages/`. Role/label locators first. Run on `desktop-chromium` and `mobile-webkit`. Every page visited gets an axe-core check. `@smoke` journeys run on every PR; the full suite runs nightly and before release.
+
+**Definition of done for a spec** (in addition to its acceptance criteria): UI matches the linked Figma frames; each acceptance criterion about behaviour has a Cucumber scenario; each user-facing journey in the spec has a Playwright test.
+
 ## Local development
 `docker compose up` → postgres:17, mailpit (SMTP 1025 / UI 8025).
 The API runs with the `local` profile: SMTP sender goes to Mailpit, covers go to the local filesystem, and JWTs are issued by the dev Cognito pool (spec 001).

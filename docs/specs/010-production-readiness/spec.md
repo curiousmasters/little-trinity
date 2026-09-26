@@ -49,6 +49,9 @@ Launch a production environment that is secure, observable, recoverable, legally
 ### 6. Quality gates
 - Coverage targets: domain/application ≥ 80% lines, with PIT mutation testing on reservations, slots and loans (report only).
 - Full Playwright suite in CI against docker compose: join, approve, search, reserve, collect, return, waitlist, renew.
+- Full Cucumber acceptance suite green, with every business rule BR-01…BR-15 covered by at least one tagged scenario (a CI check lists untagged rules).
+- Playwright full suite also runs on Firefox, nightly against dev.
+- UI review against the Figma frames for every main page at 375 px and 1280 px; differences are fixed or recorded.
 - Accessibility: axe-core checks in Playwright on all main pages, plus a manual keyboard and screen reader pass (VoiceOver) on the reserve and desk journeys.
 - Lighthouse on the home page, `/books` and book detail: Performance ≥ 90, Accessibility ≥ 95.
 
