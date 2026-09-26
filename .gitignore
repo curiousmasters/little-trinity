@@ -1,0 +1,67 @@
+# --- Secrets & local env ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+
+# --- IDEs / editors ---
+.idea/
+*.iml
+.vscode/
+*.swp
+*~
+
+# --- Backend: Java / Gradle (api/) ---
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+out/
+bin/
+*.class
+*.log
+hs_err_pid*
+
+# --- Frontend: Node / Vite (web/) ---
+node_modules/
+dist/
+dist-ssr/
+coverage/
+*.local
+.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.eslintcache
+*.tsbuildinfo
+
+# --- Playwright (web/) ---
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# --- Terraform (infra/) ---
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
+!*.tfvars.example
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+# Note: .terraform.lock.hcl is intentionally committed.
+
+# --- Local docker data ---
+.docker-data/

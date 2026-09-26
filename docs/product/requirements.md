@@ -70,3 +70,5 @@ Payments and fines, native mobile apps, SMS/WhatsApp, child logins, multiple bra
 - A3: MUI for UI components.
 - A4: Terraform for infrastructure as code.
 - A5: Domain name to be purchased, e.g. `littletrinity.co.uk`.
+- A6: UI designs are made in Figma and are the input to UI development.
+- A7: Automated testing: Cucumber acceptance tests for the backend, Playwright end-to-end tests for the UI.

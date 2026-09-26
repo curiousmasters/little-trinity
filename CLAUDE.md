@@ -22,12 +22,15 @@ Catalogue: ~100 books now, designed for 10,000.
 - `api/` – Java 25, Spring Boot 4, Spring Modulith, Spring Data JPA, Flyway, PostgreSQL 17, Gradle (Kotlin DSL)
 - `web/` – React 19, TypeScript (strict), Vite, React Router, TanStack Query, React Hook Form + Zod, MUI
 - `infra/` – Terraform (AWS: ECS Fargate, RDS, S3, CloudFront, Cognito, SES)
+- Design: Figma (source of truth for UI; links in `docs/design/README.md`)
+- Tests: JUnit 5, Testcontainers, **Cucumber** (backend acceptance), Vitest + RTL + MSW, **Playwright** (UI end-to-end)
 - Local: `docker compose up` → Postgres, Mailpit
 
 ## Commands (definition of "verified")
 ```
 # backend
-cd api && ./gradlew spotlessApply check        # format, compile, unit + integration tests (Testcontainers), ArchUnit/Modulith
+cd api && ./gradlew spotlessApply check        # format, compile, unit + integration tests (Testcontainers), ArchUnit/Modulith, Cucumber acceptance tests
+cd api && ./gradlew acceptanceTest             # Cucumber acceptance tests only
 # frontend
 cd web && npm run lint && npm run typecheck && npm test
 # end-to-end (when stack is running)
@@ -51,6 +54,7 @@ A task is done only when all relevant commands pass and you've shown the output.
 - Security: every endpoint must declare access (`PARENT`, `ADMIN`, or public). Parents can only touch their own family's data. Test that.
 - Config goes through typed `@ConfigurationProperties` (`littletrinity.*`), not scattered `@Value`.
 - Tests: JUnit 5, AssertJ, Testcontainers Postgres for repository and integration tests, `spring-security-test` `jwt()` for auth. Name tests after behaviour: `shouldRejectReservationWhenChildLimitReached`.
+- Acceptance tests: Cucumber features in `api/src/acceptanceTest/resources/features/<module>/`, tagged with module and rule IDs (`@reservations @BR-06`). Steps call the REST API only, never services or repositories. Time is set via the test `Clock`.
 
 ## Frontend conventions
 - Feature folders: `src/features/<module>/{components,pages,hooks,api}`. Shared UI in `src/components`.
@@ -58,7 +62,8 @@ A task is done only when all relevant commands pass and you've shown the output.
 - Forms: React Hook Form + Zod schemas that mirror backend validation.
 - Accessible by default: semantic elements, labels, keyboard navigation, colour contrast (WCAG 2.2 AA).
 - Mobile-first layouts. Friendly, simple language (users include children).
-- Tests: Vitest + React Testing Library for components/hooks. MSW for API mocking. Playwright for critical journeys.
+- Build UI from the spec's Figma frames (linked in `docs/design/README.md`). Use theme tokens, not hard-coded colours or sizes. If a frame is missing or not "Ready for dev", ask; don't invent the design.
+- Tests: Vitest + React Testing Library for components/hooks. MSW for API mocking. Playwright (`web/e2e/`, page objects, role/label locators, axe-core check) for user journeys.
 
 ## Git
 - Conventional commits: `feat(module): …`, `fix(module): …`, `docs(NNN): …`, `test(module): …`, `chore: …`.
